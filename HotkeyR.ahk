@@ -1,7 +1,6 @@
 ﻿#SingleInstance, Force
 #NoTrayIcon
 
-
 #include <Optimize>
 #include <SerDes>
 #include <RunAsAdmin>
@@ -11,37 +10,22 @@
 #include <_GetWindowList>
 #include <_GetWindowIcon>
 
-
-
 RunAsAdmin()
 
-
-
-
 ; Thread, interrupt, 0  ; IMPORTANT: Make all threads always-interruptible
-
-
-
 Suspend On  ; Disable all hotkeys by default
-
 
 SetWorkingDir %A_ScriptDir%
 SetCapsLockState, AlwaysOff
-
 
 BEEP_FILE = %A_ScriptDir%\Resources\Beep.wav
 APP_NAME = HotkeyR
 TEMP_FOLDER = %A_Temp%\HotkeyR
 
-
-
-
 FileCreateDir % TEMP_FOLDER
 FileDelete %TEMP_FOLDER%\*.ico
 
-
 ; msgbox % TEMP_FOLDER
-
 
 g_lastActivatedHwnd := {}
 g_hotkeyProgramMap := {}
@@ -49,7 +33,6 @@ g_keyList := "a b c d e f g h i j k l m n o p q r s t u v w x y z 0 1 2 3 4 5 6 
 g_iconCache := {}
 
 loadConfig()
-
 
 ; If the script is run with 1 parameter
 if 0 = 1
@@ -59,8 +42,6 @@ if 0 = 1
 	if ErrorLevel <> 0
         return
 }
-
-
 
 onNewHotkeyTriggered()
 {
@@ -76,8 +57,6 @@ onNewHotkeyTriggered()
         Run % A_ScriptFullPath
     }
 }
-
-
 
 for i, v in g_config
 {
@@ -100,8 +79,6 @@ for i, v in g_config
     g_hotkeyProgramMap[key] := htkInfo
 }
 
-
-
 ; Setup hotkeys
 Loop, Parse, g_keyList, %A_Tab%%A_Space%
 {
@@ -111,8 +88,6 @@ Loop, Parse, g_keyList, %A_Tab%%A_Space%
     Hotkey, *$%keyName%, onKeyPressed
 }
 
-
-
 onKeyPressed()
 {
     global g_lastActivatedHwnd
@@ -120,13 +95,11 @@ onKeyPressed()
     global g_hotkeyProgramMap
     global g_lastKeyPressed
     
-    
     ; Get current pressed key name
     keyName := A_ThisHotkey
     StringReplace, keyName, keyName, $
     StringReplace, keyName, keyName, *
     StringReplace, keyName, keyName, ~
-        
     
     if not GetKeyState("CapsLock", "P") ; Get physical state
     {
@@ -151,8 +124,7 @@ onKeyPressed()
     
     g_lastKeyPressed := keyName
     lastActivatedHwnd := g_lastActivatedHwnd[keyName]
-    
-        
+            
     ; Skip current window
     WinGet, curHwnd, ID, A ; Get hwnd of active window
     if (lastActivatedHwnd
@@ -383,9 +355,6 @@ updateUI(hwnd) {
             }
         }
     }
-    
-
-
     g_webBrowser.document.getElementById("tr_" hwnd).className := "activeWindow"
 }
 
@@ -403,28 +372,17 @@ Suspend, Permit ; Mark the current subroutine as being exempt from suspension
     }
     
     Critical
-    
     g_winList := getWindowList()
-    
+
+    ; for k, v in g_winList
+    ; {
+    ;     msg := v.processName "|" v.title
+    ;     msgbox % msg
+    ; }
+
     Suspend, Off   ; Enable all hotkeys
-    
     Critical Off
-    
-    
-    
-
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
     g_lastKeyPressed =
-    
     updateTbody()
     
     sleep 10
@@ -437,7 +395,6 @@ Suspend, Permit ; Mark the current subroutine as being exempt from suspension
     
 
     SetTimer, onTimer, 500
-    
     
     ; Extract Icons
     for i, v in g_winList
@@ -455,25 +412,12 @@ Suspend, Permit ; Mark the current subroutine as being exempt from suspension
     }
     
     ; TODO: remove nonexistent icon cache
-    
-    
-    
-    
     KeyWait CapsLock
-    
     Suspend, On
-    
     SetTimer, onTimer, Off
-
     hw_hide()
 }
 return
-
-
-
-
-
-
 
 WheelUp::scrollPage(1)
 WheelDown::scrollPage(-1)
@@ -485,7 +429,6 @@ scrollPage(delta)
     global GuiHwnd
 
     ControlGet, hwndTopControl, Hwnd,,, ahk_id %GuiHwnd%
-    
     
     WHEEL_DELTA := (120 << 16) * delta
     WinGetPos, x, y, width, height, ahk_id %GuiHwnd%
@@ -537,8 +480,7 @@ updateTbody() {
         if (v.hwnd = GuiHwnd) {
             continue
         }
-    
-    
+        
         key := SubStr(v.processName, 1, 1)
         StringUpper, key, key
     
@@ -551,8 +493,8 @@ updateTbody() {
             iconSrc = %TEMP_FOLDER%\icon_%hwnd%.ico
         else
             iconSrc = images/loading-spinner-grey.gif
+
         activeWindow := v.isActive ? "activeWindow" : ""
-        
         row = 
         (
             <tr id="tr_%hwnd%" onclick="AHK('onWindowSelected', '%hwnd%')" class="%activeWindow%">
@@ -563,10 +505,8 @@ updateTbody() {
                 <td><a class="topmost-btn btn-flat %toggleTopColor%" onclick="AHK('toggleTop', '%hwnd%')"><i class="material-icons">vertical_align_top</i></a></td>
             </tr>
         )
-    
         tbody .= row
     }
-    
     g_webBrowser.document.getElementById("tbody").innerHTML := tbody
 }
 
